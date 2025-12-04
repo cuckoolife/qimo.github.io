@@ -266,8 +266,8 @@ function bindEvents() {
         trackPolyline = new AMap.Polyline({
             path: path,
             strokeColor: getNationalityColor(nationality), // 按国籍设置颜色
-            strokeWeight: 6, // 线宽
-            strokeOpacity: 0.8, // 透明度
+            strokeWeight: 8, // 线宽
+            strokeOpacity: 0.5, // 透明度
             strokeStyle: 'solid',
             lineJoin: 'round',
             showDir: true, // 开启方向箭头（指向终点）
@@ -284,7 +284,7 @@ function bindEvents() {
             icon: new AMap.Icon({
                 size: new AMap.Size(30, 40),
                 image: 'https://webapi.amap.com/theme/v1.3/markers/n/start.png', // 起点图标
-                imageOffset: new AMap.Pixel(-13, -30)
+    
             })
         });
         map.add(startMarker);
@@ -297,7 +297,6 @@ function bindEvents() {
             icon: new AMap.Icon({
                 size: new AMap.Size(30, 40),
                 image: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png', // 终点图标
-                imageOffset: new AMap.Pixel(-13, -30)
             })
         });
         map.add(endMarker);
@@ -498,4 +497,5 @@ document.head.insertAdjacentHTML('beforeend', `
             font-weight: bold;
         }
     </style>
+
 `);
