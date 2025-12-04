@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外国人来华数据分析系统</title>
+    <link rel="stylesheet" href="src/style.css">
+    <!-- 高德地图API -->
+    <script src="https://webapi.amap.com/maps?v=2.0&key=eb7f38f7a5a3961da72febd77e0fa0b6"></script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🌍 外国人来华数据分析</h1>
+        <p class="subtitle">2025年6-10月分布与流动</p>
+    </header>
+
+    <div class="main-content">
+        <!-- 左侧控制面板 -->
+        <div class="control-panel">
+            <!-- 地图控制 -->
+            <div class="control-card">
+                <h3><span class="icon">🗺️</span> 地图</h3>
+                <div class="btn-group">
+                    <button id="vectorMapBtn" class="btn active">矢量地图</button>
+                    <button id="satelliteMapBtn" class="btn">遥感影像</button>
+                </div>
+            </div>
+
+            <!-- 热力图设置 -->
+            <div class="control-card">
+                <h3><span class="icon">🔥</span> 热力图</h3>
+                <div class="form-row">
+                    <label for="monthSelect">月份：</label>
+                    <select id="monthSelect" class="form-select">
+                        <option value="2025-06">6月</option>
+                        <option value="2025-07">7月</option>
+                        <option value="2025-08">8月</option>
+                        <option value="2025-09">9月</option>
+                        <option value="2025-10">10月</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="nationalitySelect">国籍：</label>
+                    <select id="nationalitySelect" class="form-select">
+                        <option value="all">全部</option>
+                        <option value="日本">日本</option>
+                        <option value="美国">美国</option>
+                        <option value="欧洲">欧洲</option>
+                        <option value="印度">印度</option>
+                    </select>
+                </div>
+                <button id="refreshHeatmapBtn" class="btn btn-primary">更新</button>
+            </div>
+
+            <!-- 流动轨迹 -->
+            <div class="control-card">
+                <h3><span class="icon">📍</span> 轨迹</h3>
+                <div class="form-row">
+                    <label for="trackMonth">月份：</label>
+                    <select id="trackMonth" class="form-select">
+                        <option value="2025-06">6月</option>
+                        <option value="2025-07">7月</option>
+                        <option value="2025-08">8月</option>
+                        <option value="2025-09">9月</option>
+                        <option value="2025-10">10月</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="trackNationality">国籍：</label>
+                    <select id="trackNationality" class="form-select">
+                        <option value="">选择国籍</option>
+                        <option value="日本">日本</option>
+                        <option value="美国">美国</option>
+                        <option value="欧洲">欧洲</option>
+                        <option value="印度">印度</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button id="drawTrackBtn" class="btn btn-primary">绘制</button>
+                    <button id="clearTrackBtn" class="btn btn-secondary">清除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间地图区域 -->
+        <div class="map-section">
+            <div id="map"></div>
+        </div>
+
+        <!-- 右侧数据区域 -->
+        <div class="data-panel">
+            <!-- 数据查询 -->
+            <div class="control-card">
+                <h3><span class="icon">📊</span> 数据</h3>
+                <div class="form-row">
+                    <label for="cityInput">城市：</label>
+                    <input type="text" id="cityInput" class="form-input" placeholder="城市">
+                </div>
+                <div class="form-row">
+                    <label for="searchMonth">月份：</label>
+                    <select id="searchMonth" class="form-select">
+                        <option value="">全部</option>
+                        <option value="2025-06">6月</option>
+                        <option value="2025-07">7月</option>
+                        <option value="2025-08">8月</option>
+                        <option value="2025-09">9月</option>
+                        <option value="2025-10">10月</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="dataNationality">国籍：</label>
+                    <select id="dataNationality" class="form-select">
+                        <option value="all">全部</option>
+                        <option value="日本">日本</option>
+                        <option value="美国">美国</option>
+                        <option value="欧洲">欧洲</option>
+                        <option value="印度">印度</option>
+                    </select>
+                </div>
+                <button id="searchBtn" class="btn btn-primary">查询</button>
+            </div>
+
+            <!-- 数据表格 -->
+            <div class="control-card data-table">
+                <h3><span class="icon">📋</span> 列表</h3>
+                <div id="searchResultTable" class="table-container">
+                    <p class="no-data">点击查询查看数据</p>
+                </div>
+                <!-- 分页控件 -->
+                <div id="pagination" class="pagination">
+                    <span>第 1/1 页（共 0 条）</span>
+                </div>
+            </div>
+
+            <!-- 统计信息 -->
+            <div class="control-card">
+                <h3><span class="icon">📈</span> 统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalVisitors">0</div>
+                        <div class="stat-label">总访客数（万人）</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="cityCount">0</div>
+                        <div class="stat-label">覆盖城市</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="nationalityCount">0</div>
+                        <div class="stat-label">国籍数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="monthCount">0</div>
+                        <div class="stat-label">月份范围</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 外国人来华数据分析系统 | 数据为模拟数据，仅用于演示</p>
+    </footer>
+</div>
+
+<script src=".\src\map.js"></script>
+</body>
+</html>
